@@ -2,6 +2,7 @@ include CONTRIBUTORS.txt
 include LICENSE.txt
 include MANIFEST.in
 include README.rst
+include pyproject.toml
 recursive-include crispy_forms/static *
 recursive-include crispy_forms/templates *
 recursive-include crispy_forms/tests *.py *.html
