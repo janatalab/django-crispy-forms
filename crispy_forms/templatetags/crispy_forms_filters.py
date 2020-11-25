@@ -10,6 +10,8 @@ from crispy_forms.compatibility import lru_cache
 from crispy_forms.exceptions import CrispyError
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 
+import logging
+logger = logging.getLogger('django.template')
 
 @lru_cache()
 def uni_formset_template(template_pack=TEMPLATE_PACK):
@@ -107,7 +109,18 @@ def as_crispy_field(field, template_pack=TEMPLATE_PACK, label_class="", field_cl
         "label_class": label_class,
         "field_class": field_class,
     }
-    helper = getattr(field.form, "helper", None)
+
+    # Sometimes field may not have form 
+    form = getattr(field, "form", None)
+    helper = None
+    if form is not None:
+        helper = getattr(field.form, "helper", None)
+        if settings.DEBUG:
+            logger.info(f"|as_crispy_field passed field.form with helper {helper}")
+    else:
+        logger.error('|as_crispy_field field had no form attribute')
+        if settings.DEBUG:
+            raise CrispyError("|as_crispy_field was passed a field without a form attribute")
 
     template_path = None
     if helper is not None:
